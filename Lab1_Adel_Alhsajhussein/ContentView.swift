@@ -23,13 +23,13 @@ struct ContentView: View {
 
                 VStack(spacing: 18) {
                     Button("Prime") {
-                        // Step 3 will add logic
+                        checkAnswer(userSaysPrime: true)
                     }
                     .font(.system(size: 22, weight: .medium))
                     .buttonStyle(.borderedProminent)
 
                     Button("Not Prime") {
-                        // Step 3 will add logic
+                        checkAnswer(userSaysPrime: false)
                     }
                     .font(.system(size: 22, weight: .medium))
                     .buttonStyle(.bordered)
@@ -49,6 +49,33 @@ struct ContentView: View {
             .padding(.horizontal, 24)
         }
     }
+    private func checkAnswer(userSaysPrime: Bool) {
+        let actualIsPrime = isPrime(currentNumber)
+
+        if userSaysPrime == actualIsPrime {
+            feedbackSymbol = "checkmark"
+            feedbackColor = .green
+        } else {
+            feedbackSymbol = "xmark"
+            feedbackColor = .red
+        }
+
+        currentNumber = Int.random(in: 1...100)
+    }
+
+    private func isPrime(_ n: Int) -> Bool {
+        if n < 2 { return false }
+        if n == 2 { return true }
+        if n % 2 == 0 { return false }
+
+        var i = 3
+        while i * i <= n {
+            if n % i == 0 { return false }
+            i += 2
+        }
+        return true
+    }
+
 }
 
 #Preview {
