@@ -14,6 +14,9 @@ struct ContentView: View {
     @State private var attemptCount = 0
     @State private var showSummaryAlert = false
     @State private var summaryMessage = ""
+    @State private var timeRemaining = 10
+    @State private var timerRunning = false
+    @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     var body: some View {
         ZStack {
@@ -21,7 +24,9 @@ struct ContentView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 28) {
-
+                Text("Time: \(timeRemaining)s")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundColor(.black)
                 Text("\(currentNumber)")
                     .font(.system(size: 64, weight: .semibold))
                     .foregroundColor(.blue)
@@ -67,9 +72,17 @@ struct ContentView: View {
             } message: {
                 Text(summaryMessage)
             }
+            .onReceive(timer) { _ in
+                if timerRunning && timeRemaining > 0 {
+                    timeRemaining -= 1
+                }
+            }
         }
     }
+    
     private func checkAnswer(userSaysPrime: Bool) {
+        timerRunning = true
+        timeRemaining = 10
         attemptCount += 1
 
         let actualIsPrime = isPrime(currentNumber)
