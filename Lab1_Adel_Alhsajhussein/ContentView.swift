@@ -10,45 +10,40 @@ struct ContentView: View {
     @State private var currentNumber: Int = Int.random(in: 1...100)
     @State private var showCorrectMark: Bool = false
     @State private var showWrongMark: Bool = false
+    @State private var currentNumber = Int.random(in: 1...100)
+    @State private var feedbackSymbol: String? = nil
+    @State private var feedbackColor: Color = .green
 
     var body: some View {
         ZStack {
-            Color(.systemTeal).opacity(0.20)
-                .ignoresSafeArea()
+            Color(.systemTeal).opacity(0.20).ignoresSafeArea()
 
-            VStack(spacing: 24) {
+            VStack(spacing: 28) {
 
                 Text("\(currentNumber)")
                     .font(.system(size: 64, weight: .semibold))
                     .foregroundColor(.blue)
 
-                VStack(spacing: 16) {
-
+                VStack(spacing: 18) {
                     Button("Prime") {
-                        handleAnswer(userSaysPrime: true)
+                        // Step 3 will add logic
                     }
                     .font(.system(size: 22, weight: .medium))
                     .buttonStyle(.borderedProminent)
 
                     Button("Not Prime") {
-                        handleAnswer(userSaysPrime: false)
+                        // Step 3 will add logic
                     }
                     .font(.system(size: 22, weight: .medium))
                     .buttonStyle(.bordered)
                 }
 
-                Spacer().frame(height: 40)
+                Spacer().frame(height: 30)
 
-                if showWrongMark {
-                    Image(systemName: "xmark")
+                if let symbol = feedbackSymbol {
+                    Image(systemName: symbol)
                         .font(.system(size: 70, weight: .bold))
-                        .foregroundColor(.red)
-                }
-
-                if showCorrectMark {
-                    Image(systemName: "checkmark")
-                        .font(.system(size: 70, weight: .bold))
-                        .foregroundColor(.green)
+                        .foregroundColor(feedbackColor)
                 }
 
                 Spacer()
