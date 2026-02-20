@@ -61,7 +61,9 @@ struct ContentView: View {
             .padding(.horizontal, 24)
             
             .alert("Results (10 Attempts)", isPresented: $showSummaryAlert) {
-                Button("OK") { }
+                Button("OK") {
+                    resetGame()
+                }
             } message: {
                 Text(summaryMessage)
             }
@@ -103,6 +105,13 @@ struct ContentView: View {
             i += 2
         }
         return true
+    }
+    private func resetGame() {
+        correctCount = 0
+        wrongCount = 0
+        attemptCount = 0
+        feedbackSymbol = nil
+        currentNumber = Int.random(in: 1...100)
     }
 
 }
