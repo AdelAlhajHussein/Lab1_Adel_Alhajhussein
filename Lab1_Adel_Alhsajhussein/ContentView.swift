@@ -12,6 +12,8 @@ struct ContentView: View {
     @State private var correctCount = 0
     @State private var wrongCount = 0
     @State private var attemptCount = 0
+    @State private var showSummaryAlert = false
+    @State private var summaryMessage = ""
 
     var body: some View {
         ZStack {
@@ -57,6 +59,12 @@ struct ContentView: View {
             }
             .padding(.top, 60)
             .padding(.horizontal, 24)
+            
+            .alert("Results (10 Attempts)", isPresented: $showSummaryAlert) {
+                Button("OK") { }
+            } message: {
+                Text(summaryMessage)
+            }
         }
     }
     private func checkAnswer(userSaysPrime: Bool) {
@@ -74,8 +82,15 @@ struct ContentView: View {
             feedbackColor = .red
         }
 
+        if attemptCount == 10 {
+            summaryMessage = "Correct: \(correctCount)\nWrong: \(wrongCount)"
+            showSummaryAlert = true
+        }
+
         currentNumber = Int.random(in: 1...100)
     }
+
+
 
     private func isPrime(_ n: Int) -> Bool {
         if n < 2 { return false }
