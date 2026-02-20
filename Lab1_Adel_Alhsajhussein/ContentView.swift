@@ -7,8 +7,11 @@ import SwiftUI
 struct ContentView: View {
 
     @State private var currentNumber = Int.random(in: 1...100)
-    @State private var feedbackSymbol: String? = nil   // "checkmark" or "xmark"
+    @State private var feedbackSymbol: String? = nil
     @State private var feedbackColor: Color = .green
+    @State private var correctCount = 0
+    @State private var wrongCount = 0
+    @State private var attemptCount = 0
 
     var body: some View {
         ZStack {
@@ -34,6 +37,13 @@ struct ContentView: View {
                     .font(.system(size: 22, weight: .medium))
                     .buttonStyle(.bordered)
                 }
+                HStack(spacing: 20) {
+                    Text("Correct: \(correctCount)")
+                    Text("Wrong: \(wrongCount)")
+                    Text("Attempts: \(attemptCount)")
+                }
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(.gray)
 
                 Spacer().frame(height: 30)
 
@@ -50,12 +60,16 @@ struct ContentView: View {
         }
     }
     private func checkAnswer(userSaysPrime: Bool) {
+        attemptCount += 1
+
         let actualIsPrime = isPrime(currentNumber)
 
         if userSaysPrime == actualIsPrime {
+            correctCount += 1
             feedbackSymbol = "checkmark"
             feedbackColor = .green
         } else {
+            wrongCount += 1
             feedbackSymbol = "xmark"
             feedbackColor = .red
         }
