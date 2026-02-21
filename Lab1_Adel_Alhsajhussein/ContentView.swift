@@ -6,9 +6,12 @@ import Combine
 // Student ID : 101532466
 
 struct ContentView: View {
-    private let maxNumber = 100
 
-    @State private var currentNumber = Int.random(in: 1...maxNumber)
+    private let maxNumber = 100
+    private let roundSeconds = 5
+    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+
+    @State private var currentNumber = Int.random(in: 1...100)
     @State private var feedbackSymbol: String? = nil
     @State private var feedbackColor: Color = .green
 
@@ -19,12 +22,10 @@ struct ContentView: View {
     @State private var showSummaryAlert = false
     @State private var summaryMessage = ""
 
-    @State private var timeRemaining = 10
+    @State private var timeRemaining = 5
     @State private var timerRunning = false
-    
     @State private var hasAnsweredThisRound = false
 
-    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     private var gameOver: Bool {
         attemptCount >= 10
     }
@@ -48,30 +49,31 @@ struct ContentView: View {
                     Button("Prime") {
                         checkAnswer(userSaysPrime: true)
                     }
-                    .disabled(gameOver)
                     .font(.system(size: 22, weight: .medium))
                     .buttonStyle(.borderedProminent)
+                    .disabled(gameOver)
 
                     Button("Not Prime") {
                         checkAnswer(userSaysPrime: false)
                     }
-                    .disabled(gameOver)
                     .font(.system(size: 22, weight: .medium))
                     .buttonStyle(.bordered)
+                    .disabled(gameOver)
                 }
 
                 HStack(spacing: 20) {
                     Text("Correct: \(correctCount)")
                     Text("Wrong: \(wrongCount)")
                     Text("Attempts: \(attemptCount)")
-                    Button("Restart") {
-                        resetGame()
-                    }
-                    .font(.system(size: 18, weight: .semibold))
-                    .buttonStyle(.bordered)
                 }
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(.gray)
+
+                Button("Restart") {
+                    resetGame()
+                }
+                .font(.system(size: 18, weight: .semibold))
+                .buttonStyle(.bordered)
 
                 Spacer().frame(height: 30)
 
@@ -85,6 +87,12 @@ struct ContentView: View {
             }
             .padding(.top, 60)
             .padding(.horizontal, 24)
+            .onAppear {
+                currentNumber = Int.random(in: 1...maxNumber)
+                timeRemaining = roundSeconds
+                timerRunning = true
+                hasAnsweredThisRound = false
+            }
             .alert("Results (10 Attempts)", isPresented: $showSummaryAlert) {
                 Button("OK") {
                     resetGame()
@@ -93,40 +101,34 @@ struct ContentView: View {
                 Text(summaryMessage)
             }
             .onReceive(timer) { _ in
-                            if timerRunning && !gameOver && !showSummaryAlert {
-                                if timeRemaining > 0 {
-                                    timeRemaining -= 1
-                                } else {
-                                    if !hasAnsweredThisRound {
-                                        wrongCount += 1
-                                        attemptCount += 1
-                                        feedbackSymbol = "xmark"
-                                        feedbackColor = .red
-                                        checkForSummary()
-                                    }
-
-
-                                    hasAnsweredThisRound = false
-                                    timeRemaining = roundSeconds
-                                    feedbackSymbol = nil
-                                    currentNumber = Int.random(in: 1...maxNumber)
-                                }
-                            }
+                if timerRunning && !gameOver && !showSummaryAlert {
+                    if timeRemaining > 0 {
+                        timeRemaining -= 1
+                    } else {
+                        if !hasAnsweredThisRound {
+                            wrongCount += 1
+                            attemptCount += 1
+                            feedbackSymbol = "xmark"
+                            feedbackColor = .red
+                            checkForSummary()
                         }
 
-            .onAppear {
-                timerRunning = true
-                timeRemaining = 5
-                hasAnsweredThisRound = false
+                        hasAnsweredThisRound = false
+                        timeRemaining = roundSeconds
+                        feedbackSymbol = nil
+                        currentNumber = Int.random(in: 1...maxNumber)
+                    }
+                }
             }
         }
     }
 
     private func checkAnswer(userSaysPrime: Bool) {
-        if attemptCount >= 10 { return }
-        timerRunning = true
-        timeRemaining = 10
+        if gameOver { return }
+
         hasAnsweredThisRound = true
+        timerRunning = true
+        timeRemaining = roundSeconds
 
         attemptCount += 1
         let actualIsPrime = isPrime(currentNumber)
@@ -141,8 +143,9 @@ struct ContentView: View {
             feedbackColor = .red
         }
 
-        feedbackSymbol = nil
-        currentNumber = Int.random(in: 1...100)
+        hasAnsweredThisRound = false
+        timeRemaining = roundSeconds
+        currentNumber = Int.random(in: 1...maxNumber)
         checkForSummary()
     }
 
@@ -172,9 +175,12 @@ struct ContentView: View {
         wrongCount = 0
         attemptCount = 0
         feedbackSymbol = nil
-        currentNumber = Int.random(in: 1...100)
-        timeRemaining = 10
-        timerRunning = false
+        showSummaryAlert = false
+        summaryMessage = ""
+        hasAnsweredThisRound = false
+        timeRemaining = roundSeconds
+        timerRunning = true
+        currentNumber = Int.random(in: 1...maxNumber)
     }
 }
 
