@@ -80,7 +80,7 @@ struct ContentView: View {
                         timeRemaining -= 1
                     } else {
 
-                        // TIMEOUT = WRONG ANSWER
+                        
                         wrongCount += 1
                         attemptCount += 1
 
