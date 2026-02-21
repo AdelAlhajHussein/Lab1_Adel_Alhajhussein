@@ -6,8 +6,9 @@ import Combine
 // Student ID : 101532466
 
 struct ContentView: View {
+    private let maxNumber = 100
 
-    @State private var currentNumber = Int.random(in: 1...100)
+    @State private var currentNumber = Int.random(in: 1...maxNumber)
     @State private var feedbackSymbol: String? = nil
     @State private var feedbackColor: Color = .green
 
