@@ -21,6 +21,8 @@ struct ContentView: View {
 
     @State private var timeRemaining = 10
     @State private var timerRunning = false
+    
+    @State private var hasAnsweredThisRound = false
 
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     private var gameOver: Bool {
@@ -91,19 +93,31 @@ struct ContentView: View {
                 Text(summaryMessage)
             }
             .onReceive(timer) { _ in
-                if timerRunning {
-                    if timeRemaining > 0 {
-                        timeRemaining -= 1
-                    } else {
-                        wrongCount += 1
-                        attemptCount += 1
-                        feedbackSymbol = "xmark"
-                        feedbackColor = .red
-                        timeRemaining = 10
-                        currentNumber = Int.random(in: 1...100)
-                        checkForSummary()
-                    }
-                }
+                            if timerRunning && !gameOver && !showSummaryAlert {
+                                if timeRemaining > 0 {
+                                    timeRemaining -= 1
+                                } else {
+                                    if !hasAnsweredThisRound {
+                                        wrongCount += 1
+                                        attemptCount += 1
+                                        feedbackSymbol = "xmark"
+                                        feedbackColor = .red
+                                        checkForSummary()
+                                    }
+
+
+                                    hasAnsweredThisRound = false
+                                    timeRemaining = roundSeconds
+                                    feedbackSymbol = nil
+                                    currentNumber = Int.random(in: 1...maxNumber)
+                                }
+                            }
+                        }
+
+            .onAppear {
+                timerRunning = true
+                timeRemaining = 5
+                hasAnsweredThisRound = false
             }
         }
     }
@@ -112,6 +126,7 @@ struct ContentView: View {
         if attemptCount >= 10 { return }
         timerRunning = true
         timeRemaining = 10
+        hasAnsweredThisRound = true
 
         attemptCount += 1
         let actualIsPrime = isPrime(currentNumber)
