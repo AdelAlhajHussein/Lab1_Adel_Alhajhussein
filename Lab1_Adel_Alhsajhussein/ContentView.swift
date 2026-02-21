@@ -62,6 +62,11 @@ struct ContentView: View {
                     Text("Correct: \(correctCount)")
                     Text("Wrong: \(wrongCount)")
                     Text("Attempts: \(attemptCount)")
+                    Button("Restart") {
+                        resetGame()
+                    }
+                    .font(.system(size: 18, weight: .semibold))
+                    .buttonStyle(.bordered)
                 }
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(.gray)
