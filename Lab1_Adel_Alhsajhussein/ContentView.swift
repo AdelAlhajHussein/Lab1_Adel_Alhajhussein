@@ -98,6 +98,7 @@ struct ContentView: View {
     }
 
     private func checkAnswer(userSaysPrime: Bool) {
+        if attemptCount >= 10 { return }
         timerRunning = true
         timeRemaining = 10
 
