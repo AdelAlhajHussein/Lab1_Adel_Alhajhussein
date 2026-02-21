@@ -115,6 +115,7 @@ struct ContentView: View {
             feedbackColor = .red
         }
 
+        feedbackSymbol = nil
         currentNumber = Int.random(in: 1...100)
         checkForSummary()
     }
