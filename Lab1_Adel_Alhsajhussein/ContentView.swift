@@ -23,6 +23,9 @@ struct ContentView: View {
     @State private var timerRunning = false
 
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    private var gameOver: Bool {
+        attemptCount >= 10
+    }
 
     var body: some View {
         ZStack {
@@ -43,12 +46,14 @@ struct ContentView: View {
                     Button("Prime") {
                         checkAnswer(userSaysPrime: true)
                     }
+                    .disabled(gameOver)
                     .font(.system(size: 22, weight: .medium))
                     .buttonStyle(.borderedProminent)
 
                     Button("Not Prime") {
                         checkAnswer(userSaysPrime: false)
                     }
+                    .disabled(gameOver)
                     .font(.system(size: 22, weight: .medium))
                     .buttonStyle(.bordered)
                 }
