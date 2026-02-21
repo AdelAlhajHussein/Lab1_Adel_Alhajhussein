@@ -132,6 +132,12 @@ struct ContentView: View {
             if n % i == 0 { return false }
             i += 2
         }
+        private func checkForSummary() {
+            if attemptCount == 10 {
+                summaryMessage = "Correct: \(correctCount)\nWrong: \(wrongCount)"
+                showSummaryAlert = true
+                timerRunning = false
+            }
         return true
     }
     private func resetGame() {
