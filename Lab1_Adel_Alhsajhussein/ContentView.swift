@@ -10,14 +10,18 @@ struct ContentView: View {
     @State private var currentNumber = Int.random(in: 1...100)
     @State private var feedbackSymbol: String? = nil
     @State private var feedbackColor: Color = .green
+
     @State private var correctCount = 0
     @State private var wrongCount = 0
     @State private var attemptCount = 0
+
     @State private var showSummaryAlert = false
     @State private var summaryMessage = ""
+
     @State private var timeRemaining = 10
     @State private var timerRunning = false
-    @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+
+    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     var body: some View {
         ZStack {
@@ -25,9 +29,11 @@ struct ContentView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 28) {
+
                 Text("Time: \(timeRemaining)s")
                     .font(.system(size: 20, weight: .semibold))
                     .foregroundColor(.black)
+
                 Text("\(currentNumber)")
                     .font(.system(size: 64, weight: .semibold))
                     .foregroundColor(.blue)
@@ -45,6 +51,7 @@ struct ContentView: View {
                     .font(.system(size: 22, weight: .medium))
                     .buttonStyle(.bordered)
                 }
+
                 HStack(spacing: 20) {
                     Text("Correct: \(correctCount)")
                     Text("Wrong: \(wrongCount)")
@@ -65,7 +72,6 @@ struct ContentView: View {
             }
             .padding(.top, 60)
             .padding(.horizontal, 24)
-            
             .alert("Results (10 Attempts)", isPresented: $showSummaryAlert) {
                 Button("OK") {
                     resetGame()
@@ -75,31 +81,27 @@ struct ContentView: View {
             }
             .onReceive(timer) { _ in
                 if timerRunning {
-
                     if timeRemaining > 0 {
                         timeRemaining -= 1
                     } else {
-
-                        
                         wrongCount += 1
                         attemptCount += 1
-
                         feedbackSymbol = "xmark"
                         feedbackColor = .red
-
                         timeRemaining = 10
                         currentNumber = Int.random(in: 1...100)
+                        checkForSummary()
                     }
                 }
             }
         }
     }
-    
+
     private func checkAnswer(userSaysPrime: Bool) {
         timerRunning = true
         timeRemaining = 10
-        attemptCount += 1
 
+        attemptCount += 1
         let actualIsPrime = isPrime(currentNumber)
 
         if userSaysPrime == actualIsPrime {
@@ -112,15 +114,17 @@ struct ContentView: View {
             feedbackColor = .red
         }
 
+        currentNumber = Int.random(in: 1...100)
+        checkForSummary()
+    }
+
+    private func checkForSummary() {
         if attemptCount == 10 {
             summaryMessage = "Correct: \(correctCount)\nWrong: \(wrongCount)"
             showSummaryAlert = true
+            timerRunning = false
         }
-
-        currentNumber = Int.random(in: 1...100)
     }
-
-
 
     private func isPrime(_ n: Int) -> Bool {
         if n < 2 { return false }
@@ -132,25 +136,20 @@ struct ContentView: View {
             if n % i == 0 { return false }
             i += 2
         }
-        private func checkForSummary() {
-            if attemptCount == 10 {
-                summaryMessage = "Correct: \(correctCount)\nWrong: \(wrongCount)"
-                showSummaryAlert = true
-                timerRunning = false
-            }
         return true
     }
+
     private func resetGame() {
         correctCount = 0
         wrongCount = 0
         attemptCount = 0
         feedbackSymbol = nil
         currentNumber = Int.random(in: 1...100)
+        timeRemaining = 10
+        timerRunning = false
     }
-
 }
 
 #Preview {
     ContentView()
 }
-
