@@ -73,8 +73,22 @@ struct ContentView: View {
                 Text(summaryMessage)
             }
             .onReceive(timer) { _ in
-                if timerRunning && timeRemaining > 0 {
-                    timeRemaining -= 1
+                if timerRunning {
+
+                    if timeRemaining > 0 {
+                        timeRemaining -= 1
+                    } else {
+
+                        // TIMEOUT = WRONG ANSWER
+                        wrongCount += 1
+                        attemptCount += 1
+
+                        feedbackSymbol = "xmark"
+                        feedbackColor = .red
+
+                        timeRemaining = 10
+                        currentNumber = Int.random(in: 1...100)
+                    }
                 }
             }
         }
